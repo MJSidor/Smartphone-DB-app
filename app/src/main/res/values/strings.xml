@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">lab3</string>
+    <string name="empty_text">Wprowadź dane</string>
+    <string name="addSmartphone_text">Dodaj telefon</string>
+    <string name="TextView_add_brand">Producent</string>
+    <string name="TextView_add_model">Model</string>
+    <string name="TextView_add_version">Wersja androida</string>
+    <string name="TextView_add_www">WWW</string>
+    <string name="button_www_text">WWW</string>
+    <string name="button_cancel_text">Anuluj</string>
+    <string name="button_save_text">Zapisz</string>
+    <string name="editText_brand_hint">Upper/lowercase letters</string>
+    <string name="editText_model_hint">Upper/lowercase letters and digits</string>
+    <string name="editText_version_hint">Digits and dots</string>
+    <string name="editText_www_hint">WWW address</string>
+    <string name="deleteSmartphones_text">Remove selected</string>
+</resources>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddSmartphoneData">
+
+    <TextView
+        android:id="@+id/TextView_add_brand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/TextView_add_brand"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/TextView_add_model"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/TextView_add_model"
+        app:layout_constraintStart_toStartOf="@+id/TextView_add_brand"
+        app:layout_constraintTop_toBottomOf="@+id/TextView_add_brand" />
+
+    <TextView
+        android:id="@+id/TextView_add_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/TextView_add_version"
+        app:layout_constraintStart_toStartOf="@+id/TextView_add_model"
+        app:layout_constraintTop_toBottomOf="@+id/TextView_add_model" />
+
+    <TextView
+        android:id="@+id/TextView_add_www"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/TextView_add_www"
+        app:layout_constraintStart_toStartOf="@+id/TextView_add_version"
+        app:layout_constraintTop_toBottomOf="@+id/TextView_add_version" />
+
+    <EditText
+        android:id="@+id/editText_brand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:digits=" qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"
+        android:hint="@string/editText_brand_hint"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text=""
+        android:textSize="14sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/TextView_add_brand"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/editText_model"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:digits=" qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890+-"
+        android:hint="@string/editText_model_hint"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text=""
+        android:textSize="14sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/TextView_add_model"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/editText_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:digits="1234567890."
+        android:hint="@string/editText_version_hint"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text=""
+        android:textSize="14sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/TextView_add_version"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/editText_www"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM:/\1234567890-_."
+        android:hint="@string/editText_www_hint"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text=""
+        android:textSize="14sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/TextView_add_www"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/button_www"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="50dp"
+        android:onClick="www"
+        android:text="@string/button_www_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TextView_add_www" />
+
+    <Button
+        android:id="@+id/button_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:onClick="cancel"
+        android:text="@string/button_cancel_text"
+        app:layout_constraintBottom_toBottomOf="@+id/button_www"
+        app:layout_constraintEnd_toStartOf="@+id/button_save"
+        app:layout_constraintStart_toEndOf="@+id/button_www" />
+
+    <Button
+        android:id="@+id/button_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:onClick="save"
+        android:text="@string/button_save_text"
+        app:layout_constraintBottom_toBottomOf="@+id/button_cancel"
+        app:layout_constraintEnd_toEndOf="parent" />
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <selector xmlns:android="http://schemas.android.com/apk/res/android"><!-- kiedy element jest naciśnięty -->
+        <item
+            android:drawable="@color/colorPressed"
+            android:state_pressed="true" /><!-- element nie jest naciśnięty ale jest zaznaczony -->
+        <item
+            android:drawable="@color/colorActive"
+            android:state_activated="true" />
+    </selector>
+</selector>

@@ -5,12 +5,16 @@
     <item
         android:id="@+id/menu_header"
         app:showAsAction="always"
-        android:title="@string/menu_header_text" />
+        android:title="@string/menu_header_text"
+        android:clickable="false"
+        />
 
     <item
         android:id="@+id/menu_counter"
         app:showAsAction="always"
-        android:title="" />
+        android:title=""
+        android:clickable="false"
+        />
 
     <item
         android:id="@+id/deleteSmartphones"

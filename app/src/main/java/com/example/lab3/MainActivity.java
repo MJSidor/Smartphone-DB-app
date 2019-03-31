@@ -121,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
             onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.contextual_menu, menu);
+                checkedCount=0;
                 return true;
             }
 
@@ -157,7 +158,6 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
                 Intent intent = new Intent(getApplicationContext(), AddSmartphoneData.class);
                 intent.putExtra("operationType", "update");
                 intent.putExtra("id", id);
-                showToast("ID: " +Long.toString(id));
 
                 startActivityForResult(intent, new Integer(0));
             }

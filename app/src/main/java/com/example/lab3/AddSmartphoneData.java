@@ -44,7 +44,6 @@ public class AddSmartphoneData extends AppCompatActivity {
         {
             getSupportActionBar().setTitle("Update DB entry");
             id=bundleIn.getLong("id");
-            //showToast();
         }
     }
 
@@ -124,7 +123,6 @@ public class AddSmartphoneData extends AppCompatActivity {
 
         wartosci.put("brand", brand.getText().toString());
         wartosci.put("model", model.getText().toString());
-        showToast(Long.toString(id));
 
         getContentResolver().update(dbProvider.URI_ZAWARTOSCI, wartosci, DBHelper.ID + " = " + Long.toString(id), null);
         finish();

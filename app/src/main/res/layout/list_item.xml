@@ -25,7 +25,7 @@
             android:id="@+id/wiersz1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/row_bakcground">
+            android:background="@drawable/row_background">
 
 
             <TextView

@@ -6,13 +6,13 @@ import android.app.ListActivity;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.menu.ActionMenuItemView;
@@ -30,7 +30,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 
-public class MainActivity extends AppCompatActivity implements AbsListView.MultiChoiceModeListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class MainActivity extends AppCompatActivity implements AbsListView.MultiChoiceModeListener, android.app.LoaderManager.LoaderCallbacks<Cursor> {
 
     private DBHelper DBHelper;
     private SQLiteDatabase DB;
@@ -53,9 +53,9 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         setUpContextualMenu();
         setUpOnClickListener();
 
-        showDB();
+        //showDB();
 
-        //uruchomLoader();
+        uruchomLoader();
 
 
     }
@@ -253,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
     private void uruchomLoader() {
         getLoaderManager().initLoader(0, //identyfikator loadera
                 null, //argumenty (Bundle)
-                (android.app.LoaderManager.LoaderCallbacks<Object>) this); //klasa implementująca LoaderCallbacks
+                 this); //klasa implementująca LoaderCallbacks
 
         String[] mapujZ = new String[]{
                 DBHelper.COLUMN1, DBHelper.COLUMN2
@@ -266,16 +266,29 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         list.setAdapter(DBadapter);
     }
 
-    //implementacja loadera
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // adapter wymaga aby wyniku zapytania znajdowała się kolumna _id
         String[] projection = {DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2}; // inne „kolumny” do wyświetlenia
-        CursorLoader cLoader = new CursorLoader(getApplicationContext(),
+        CursorLoader cLoader = new CursorLoader(this,
                 Provider.URI_ZAWARTOSCI, projection, null, null, null);
-        return cLoader;
+        //return cLoader;
+        return null;
     }
 
+    @Override
+    public void onLoadFinished(android.content.Loader<Cursor> loader, Cursor data) {
+        //ustawienie danych w adapterze
+        adapterBazy.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(android.content.Loader<Cursor> loader) {
+        adapterBazy.swapCursor(null);
+    }
+
+    /*
     @Override
     public void onLoadFinished(Loader<Cursor> arg0, Cursor dane) {
         //ustawienie danych w adapterze
@@ -286,6 +299,6 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
     public void onLoaderReset(Loader<Cursor> arg0) {
         adapterBazy.swapCursor(null);
     }
-
+*/
 
 }

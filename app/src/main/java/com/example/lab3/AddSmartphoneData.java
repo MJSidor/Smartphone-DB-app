@@ -16,7 +16,7 @@ public class AddSmartphoneData extends AppCompatActivity {
     private EditText model;
     private EditText www;
     String operationType;
-    int position;
+    int id;
     Provider dbProvider;
 
     @Override
@@ -43,7 +43,7 @@ public class AddSmartphoneData extends AppCompatActivity {
         if (operationType.startsWith("update"))
         {
             getSupportActionBar().setTitle("Update DB entry");
-            position=bundleIn.getInt("position");
+            id=bundleIn.getInt("id");
         }
     }
 
@@ -73,7 +73,7 @@ public class AddSmartphoneData extends AppCompatActivity {
             bundleOut.putString("brand", brand.getText().toString());
             bundleOut.putString("model", model.getText().toString());
             bundleOut.putString("operationType", operationType);
-            if (operationType.startsWith("update")) bundleOut.putInt("position",position);
+            if (operationType.startsWith("update")) bundleOut.putInt("id",id);
             Intent intentOut = new Intent();
             intentOut.putExtras(bundleOut);
             setResult(RESULT_OK, intentOut);
@@ -122,8 +122,9 @@ public class AddSmartphoneData extends AppCompatActivity {
 
         wartosci.put("brand", brand.getText().toString());
         wartosci.put("model", model.getText().toString());
+        showToast(Integer.toString(id));
 
-        getContentResolver().update(dbProvider.URI_ZAWARTOSCI, wartosci, DBHelper.ID + " = " + "3", null);
+        getContentResolver().update(dbProvider.URI_ZAWARTOSCI, wartosci, DBHelper.ID + " = " + Integer.toString(id), null);
     }
 
 

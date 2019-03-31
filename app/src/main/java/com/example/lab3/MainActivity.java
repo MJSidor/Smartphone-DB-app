@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
                 switch (item.getItemId()) {
                     case R.id.deleteSmartphones:
                         deleteSelected();
+                        checkedCount=0;
                         showDB();
                         showToast("Deleting " + Integer.toString(checkedCount) + " selected items...");
                         return true;
@@ -155,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), AddSmartphoneData.class);
                 intent.putExtra("operationType", "update");
-                intent.putExtra("position", position + 1);
+                intent.putExtra("id", position);
 
                 startActivityForResult(intent, new Integer(0));
             }
@@ -166,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         long checked[] = list.getCheckedItemIds();
         for (int i = 0; i < checked.length; ++i) {
             getContentResolver().delete(ContentUris.withAppendedId(dbProvider.URI_ZAWARTOSCI, checked[i]), DBHelper.ID + " = " + Long.toString(checked[i]), null);
+            showToast("Usuwam + " +Long.toString(checked[i]));
         }
     }
 

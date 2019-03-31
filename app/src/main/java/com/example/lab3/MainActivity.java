@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
                     case R.id.deleteSmartphones:
                         deleteSelected();
                         showDB();
-                        showToast("Deleting " + Integer.toString(checkedCount) + " selected items...");
+                        showToast("Deleting selected items...");
                         checkedCount = 0;
                         return true;
                 }
@@ -168,7 +168,6 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         long checked[] = list.getCheckedItemIds();
         for (int i = 0; i < checked.length; ++i) {
             getContentResolver().delete(ContentUris.withAppendedId(dbProvider.URI_ZAWARTOSCI, checked[i]), DBHelper.ID + " = " + Long.toString(checked[i]), null);
-            showToast("Usuwam id " + Long.toString(checked[i]));
         }
     }
 

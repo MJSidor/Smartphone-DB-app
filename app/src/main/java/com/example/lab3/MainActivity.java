@@ -8,9 +8,14 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -19,18 +24,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 
-public class MainActivity extends AppCompatActivity implements AbsListView.MultiChoiceModeListener {
+public class MainActivity extends AppCompatActivity implements AbsListView.MultiChoiceModeListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private DBHelper DBHelper;
     private SQLiteDatabase DB;
     private long rowID;
     private Cursor kursor;
-    ListView list;
+    private ListView list;
+    private SimpleCursorAdapter adapterBazy;
+    private Provider dbProvider;
+    private ActionMenuItemView deleteCounter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,19 +56,22 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
 
         showDB();
 
+        //uruchomLoader();
+
 
     }
 
     public void showDB() {
-        kursor = DB.query(true, //distinct
-                DBHelper.TABLE_NAME,  //tabela
-                new String[]{DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2}, //kolumny
-                null,  //where
-                null,  //whereArgs - argumenty zastępujące "?" w where
-                null,  //group by
-                null,  //having
-                null,  //order by
-                null); //limit
+
+        String[] mapujZ = new String[]{
+                DBHelper.COLUMN1, DBHelper.COLUMN2
+        };
+        int[] mapujDo = new int[]{
+                R.id.textView_brand, R.id.textView_model
+        };
+
+        kursor = getContentResolver().query(Provider.URI_ZAWARTOSCI, new String[]{DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2},null,null, null);
+
         startManagingCursor(kursor);
 
         kursor.moveToFirst();
@@ -70,30 +82,12 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
             kursor.moveToNext();
         }
 
-        String[] mapujZ = new String[]{
-                DBHelper.COLUMN1, DBHelper.COLUMN2
-        };
-        int[] mapujDo = new int[]{
-                R.id.textView_brand, R.id.textView_model
-        };
-
         SimpleCursorAdapter adapterBazy = new SimpleCursorAdapter(this, R.layout.list_item, kursor, mapujZ, mapujDo);
 
         list.setAdapter(adapterBazy);
 
-
     }
 
-    public void insertToDB(String brand, String model) {
-
-        ContentValues wartosci = new ContentValues();
-        wartosci.put(DBHelper.COLUMN1, brand);
-        wartosci.put(DBHelper.COLUMN2, model);
-
-        this.rowID = DB.insert(DBHelper.TABLE_NAME, null, wartosci);
-
-
-    }
 
     public void updateDBEntry(String brand, String model, int position) {
 
@@ -109,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
     public void setUpContextualMenu() {
         list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         list.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            int checkedCount = 0;
 
             @Override
             public boolean
@@ -135,15 +130,21 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
                 switch (item.getItemId()) {
                     case R.id.deleteSmartphones:
                         deleteSelected();
-                        showToast("Deleting selected items...");
+                        showDB();
+                        showToast("Deleting " + Integer.toString(checkedCount) + " selected items...");
                         return true;
                 }
                 return false;
             }
 
+
             @Override
             public void
             onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                if (checked) checkedCount++;
+                if (!checked) checkedCount--;
+                deleteCounter = findViewById(R.id.menu_counter);
+                deleteCounter.setText(Integer.toString(checkedCount));
             }
         });
     }
@@ -154,8 +155,8 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), AddSmartphoneData.class);
                 intent.putExtra("operationType", "update");
-                intent.putExtra("position", position+1);
-                
+                intent.putExtra("position", position + 1);
+
                 startActivityForResult(intent, new Integer(0));
             }
         });
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
     private void deleteSelected() {
         long checked[] = list.getCheckedItemIds();
         for (int i = 0; i < checked.length; ++i) {
-            //getContentResolver().delete(ContentUris.withAppendedId(MojProvider.URI_ZAWARTOSCI, checked[i]), null, null);
+            getContentResolver().delete(ContentUris.withAppendedId(dbProvider.URI_ZAWARTOSCI, checked[i]), DBHelper.ID + " = " + Long.toString(checked[i]), null);
         }
     }
 
@@ -195,15 +196,13 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
             String brand = bundle.getString("brand");
             String model = bundle.getString("model");
             String operationType = bundle.getString("operationType");
-            if (operationType.startsWith("insert"))
-            {
-                insertToDB(brand, model);
+            if (operationType.startsWith("insert")) {
+                //insertToDB(brand, model);
                 showToast("New entry added");
             }
-            if (operationType.startsWith("update"))
-            {
-                int position=bundle.getInt("position");
-                updateDBEntry(brand, model,position);
+            if (operationType.startsWith("update")) {
+                int position = bundle.getInt("position");
+                //updateDBEntry(brand, model, position);
                 showToast("Entry updated");
             }
         }
@@ -245,4 +244,43 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
     public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
 
     }
+
+    private void uruchomLoader() {
+        getLoaderManager().initLoader(0, //identyfikator loadera
+                null, //argumenty (Bundle)
+                (android.app.LoaderManager.LoaderCallbacks<Object>) this); //klasa implementująca LoaderCallbacks
+
+        String[] mapujZ = new String[]{
+                DBHelper.COLUMN1, DBHelper.COLUMN2
+        };
+        int[] mapujDo = new int[]{
+                R.id.textView_brand, R.id.textView_model
+        };
+
+        SimpleCursorAdapter DBadapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.list_item, kursor, mapujZ, mapujDo);
+        list.setAdapter(DBadapter);
+    }
+
+    //implementacja loadera
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        // adapter wymaga aby wyniku zapytania znajdowała się kolumna _id
+        String[] projection = {DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2}; // inne „kolumny” do wyświetlenia
+        CursorLoader cLoader = new CursorLoader(getApplicationContext(),
+                Provider.URI_ZAWARTOSCI, projection, null, null, null);
+        return cLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> arg0, Cursor dane) {
+        //ustawienie danych w adapterze
+        adapterBazy.swapCursor(dane);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> arg0) {
+        adapterBazy.swapCursor(null);
+    }
+
+
 }

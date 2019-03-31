@@ -17,6 +17,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:name="Provider"
+            android:authorities="com.example.smartphones.Provider"
+            android:enabled="true"
+            android:exported="true">
+        <!-- enabled = czy system może utworzyć instancję dostawcy -->
+
+        <!-- exported = dostępny dla innych aplikacji, nie wyeksportowany = dostępny dla
+        aplikacji z tym samym ID użytkownika -->
+
+    </provider>
+
     </application>
 
 </manifest>

@@ -1,5 +1,6 @@
 package com.example.lab3;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ public class AddSmartphoneData extends AppCompatActivity {
     private EditText www;
     String operationType;
     int position;
+    Provider dbProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +30,6 @@ public class AddSmartphoneData extends AppCompatActivity {
         www = (EditText) findViewById(R.id.editText_www);
 
         handleOperationType();
-
 
 
 
@@ -76,6 +77,8 @@ public class AddSmartphoneData extends AppCompatActivity {
             Intent intentOut = new Intent();
             intentOut.putExtras(bundleOut);
             setResult(RESULT_OK, intentOut);
+            if (operationType.startsWith("insert")) dodajWartosc();
+            if (operationType.startsWith("update")) edytujWartosc();
             finish();
         }
     }
@@ -95,6 +98,35 @@ public class AddSmartphoneData extends AppCompatActivity {
         Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
         toast.show();
     }
+
+    private void dodajWartosc() {
+        ContentValues wartosci = new ContentValues();
+        dbProvider= new Provider();
+        EditText brand = (EditText)
+                findViewById(R.id.editText_brand);
+        EditText model = (EditText)
+                findViewById(R.id.editText_model);
+
+        wartosci.put("brand", brand.getText().toString());
+        wartosci.put("model", model.getText().toString());
+        Uri uriNowego = getContentResolver().insert(dbProvider.URI_ZAWARTOSCI, wartosci);
+    }
+
+    private void edytujWartosc() {
+        ContentValues wartosci = new ContentValues();
+        dbProvider= new Provider();
+        EditText brand = (EditText)
+                findViewById(R.id.editText_brand);
+        EditText model = (EditText)
+                findViewById(R.id.editText_model);
+
+        wartosci.put("brand", brand.getText().toString());
+        wartosci.put("model", model.getText().toString());
+
+        getContentResolver().update(dbProvider.URI_ZAWARTOSCI, wartosci, DBHelper.ID + " = " + "3", null);
+    }
+
+
 
 
 }

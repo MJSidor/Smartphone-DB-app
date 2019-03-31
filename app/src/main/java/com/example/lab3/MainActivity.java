@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
                 R.id.textView_brand, R.id.textView_model
         };
 
-        kursor = getContentResolver().query(Provider.URI_ZAWARTOSCI, new String[]{DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2},null,null, null);
+        kursor = getContentResolver().query(Provider.URI_ZAWARTOSCI, new String[]{DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2}, null, null, null);
 
         startManagingCursor(kursor);
 
@@ -130,9 +130,9 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
                 switch (item.getItemId()) {
                     case R.id.deleteSmartphones:
                         deleteSelected();
-                        checkedCount=0;
                         showDB();
                         showToast("Deleting " + Integer.toString(checkedCount) + " selected items...");
+                        checkedCount = 0;
                         return true;
                 }
                 return false;
@@ -156,7 +156,8 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), AddSmartphoneData.class);
                 intent.putExtra("operationType", "update");
-                intent.putExtra("id", position);
+                intent.putExtra("id", id);
+                showToast("ID: " +Long.toString(id));
 
                 startActivityForResult(intent, new Integer(0));
             }
@@ -167,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         long checked[] = list.getCheckedItemIds();
         for (int i = 0; i < checked.length; ++i) {
             getContentResolver().delete(ContentUris.withAppendedId(dbProvider.URI_ZAWARTOSCI, checked[i]), DBHelper.ID + " = " + Long.toString(checked[i]), null);
-            showToast("Usuwam + " +Long.toString(checked[i]));
+            showToast("Usuwam id " + Long.toString(checked[i]));
         }
     }
 

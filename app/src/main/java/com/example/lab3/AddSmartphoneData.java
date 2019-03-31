@@ -16,7 +16,7 @@ public class AddSmartphoneData extends AppCompatActivity {
     private EditText model;
     private EditText www;
     String operationType;
-    int id;
+    long id;
     Provider dbProvider;
 
     @Override
@@ -39,11 +39,12 @@ public class AddSmartphoneData extends AppCompatActivity {
     {
         Bundle bundleIn = getIntent().getExtras();
         operationType = bundleIn.getString("operationType");
-        if (operationType.startsWith("insert")) getSupportActionBar().setTitle("Add a smartphone to the DB");
-        if (operationType.startsWith("update"))
+        if (operationType.contains("insert")) getSupportActionBar().setTitle("Add a smartphone to the DB");
+        if (operationType.contains("update"))
         {
             getSupportActionBar().setTitle("Update DB entry");
-            id=bundleIn.getInt("id");
+            id=bundleIn.getLong("id");
+            //showToast();
         }
     }
 
@@ -55,7 +56,7 @@ public class AddSmartphoneData extends AppCompatActivity {
     }
 
     public boolean isDataOK() {
-        if (brand.getText().toString().length() >= 3 && version.getText().toString().length() >= 3 && model.getText().toString().length() >= 3) {
+        if (brand.getText().toString().length() >= 2 && version.getText().toString().length() >= 3 && model.getText().toString().length() >= 1) {
             return true;
         } else return false;
     }
@@ -73,7 +74,7 @@ public class AddSmartphoneData extends AppCompatActivity {
             bundleOut.putString("brand", brand.getText().toString());
             bundleOut.putString("model", model.getText().toString());
             bundleOut.putString("operationType", operationType);
-            if (operationType.startsWith("update")) bundleOut.putInt("id",id);
+            if (operationType.startsWith("update")) bundleOut.putLong("id",id);
             Intent intentOut = new Intent();
             intentOut.putExtras(bundleOut);
             setResult(RESULT_OK, intentOut);
@@ -110,6 +111,7 @@ public class AddSmartphoneData extends AppCompatActivity {
         wartosci.put("brand", brand.getText().toString());
         wartosci.put("model", model.getText().toString());
         Uri uriNowego = getContentResolver().insert(dbProvider.URI_ZAWARTOSCI, wartosci);
+        finish();
     }
 
     private void edytujWartosc() {
@@ -122,9 +124,10 @@ public class AddSmartphoneData extends AppCompatActivity {
 
         wartosci.put("brand", brand.getText().toString());
         wartosci.put("model", model.getText().toString());
-        showToast(Integer.toString(id));
+        showToast(Long.toString(id));
 
-        getContentResolver().update(dbProvider.URI_ZAWARTOSCI, wartosci, DBHelper.ID + " = " + Integer.toString(id), null);
+        getContentResolver().update(dbProvider.URI_ZAWARTOSCI, wartosci, DBHelper.ID + " = " + Long.toString(id), null);
+        finish();
     }
 
 

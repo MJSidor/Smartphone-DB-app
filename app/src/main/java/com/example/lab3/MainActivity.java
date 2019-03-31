@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
     private ListView list;
     private SimpleCursorAdapter adapterBazy;
     private Provider dbProvider;
-    private ActionMenuItemView deleteCounter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         list.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             int checkedCount = 0;
+            private ActionMenuItemView deleteCounter = findViewById(R.id.menu_counter);
 
             @Override
             public boolean
@@ -132,8 +132,11 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
                     case R.id.deleteSmartphones:
                         deleteSelected();
                         showDB();
-                        showToast("Deleting selected items...");
                         checkedCount = 0;
+                        deleteCounter = findViewById(R.id.menu_counter);
+                        deleteCounter.setText(Integer.toString(checkedCount));
+                        showToast("Deleting selected items...");
+
                         return true;
                 }
                 return false;

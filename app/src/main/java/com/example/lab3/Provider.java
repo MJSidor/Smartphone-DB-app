@@ -58,7 +58,7 @@ public class Provider extends ContentProvider {
                         values); //wartości
                 break;
             default:
-                throw new IllegalArgumentException("Nieznane URI: " +
+                throw new IllegalArgumentException("Unknown URI: " +
                         uri);
         }
         //powiadomienie o zmianie danych (->np. odświeżenie listy)
@@ -96,7 +96,7 @@ public class Provider extends ContentProvider {
                         null); //limit
                 break;
             default:
-                throw new IllegalArgumentException("Nieznane URI: " + uri);
+                throw new IllegalArgumentException("Unknown URI: " + uri);
         }
         //URI może być monitorowane pod kątem zmiany danych – tu jest rejestrowane. Obserwator (którego trzeba zarejestrować będzie powiadamiany o zmianie danych)
         kursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -122,7 +122,7 @@ public class Provider extends ContentProvider {
                         selectionArgs);//usuwanie rekordu (może się nie udać)
                 break;
             default:
-                throw new IllegalArgumentException("Nieznane URI: " +
+                throw new IllegalArgumentException("Unknown URI: " +
                         uri);
         }
         //powiadomienie o zmianie danych
@@ -151,7 +151,7 @@ public class Provider extends ContentProvider {
                         selectionArgs); //whereArgs (zastępują "?" w parametrze where)//aktualizacja...
                 break;
             default:
-                throw new IllegalArgumentException("Nieznane URI: " +
+                throw new IllegalArgumentException("Unknown URI: " +
                         uri);
         } //powiadomienie o zmianie danych
         getContext().getContentResolver().notifyChange(uri, null);

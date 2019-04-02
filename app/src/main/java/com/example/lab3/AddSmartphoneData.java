@@ -44,12 +44,15 @@ public class AddSmartphoneData extends AppCompatActivity {
         {
             getSupportActionBar().setTitle("Update DB entry");
             id=bundleIn.getLong("id");
+
+            brand.setText(bundleIn.getString("brand"));
+            model.setText(bundleIn.getString("model"));
         }
     }
 
     public boolean validate() {
         if (!isDataOK()) {
-            showToast("Wprowadz poprawne dane");
+            showToast("Enter valid data");
             return false;
         } else return true;
     }
@@ -62,7 +65,7 @@ public class AddSmartphoneData extends AppCompatActivity {
 
 
     public void cancel(View view) {
-        showToast("Anuluję...");
+        showToast("Cancelled");
         finish();
     }
 
@@ -70,15 +73,13 @@ public class AddSmartphoneData extends AppCompatActivity {
         if (validate()) {
 
             Bundle bundleOut = new Bundle();
-            bundleOut.putString("brand", brand.getText().toString());
-            bundleOut.putString("model", model.getText().toString());
             bundleOut.putString("operationType", operationType);
             if (operationType.startsWith("update")) bundleOut.putLong("id",id);
             Intent intentOut = new Intent();
             intentOut.putExtras(bundleOut);
             setResult(RESULT_OK, intentOut);
-            if (operationType.startsWith("insert")) dodajWartosc();
-            if (operationType.startsWith("update")) edytujWartosc();
+            if (operationType.startsWith("insert")) addDBentry();
+            if (operationType.startsWith("update")) updateDBentry();
             finish();
         }
     }
@@ -91,7 +92,7 @@ public class AddSmartphoneData extends AppCompatActivity {
             else webpage = Uri.parse(www.getText().toString());
             Intent webIntent = new Intent(Intent.ACTION_VIEW, webpage);
             startActivity(webIntent);
-        } else showToast("Wprowadź poprawny adres!");
+        } else showToast("Enter valid address");
     }
 
     public void showToast(String message) {
@@ -99,7 +100,7 @@ public class AddSmartphoneData extends AppCompatActivity {
         toast.show();
     }
 
-    private void dodajWartosc() {
+    private void addDBentry() {
         ContentValues wartosci = new ContentValues();
         dbProvider= new Provider();
         EditText brand = (EditText)
@@ -113,7 +114,7 @@ public class AddSmartphoneData extends AppCompatActivity {
         finish();
     }
 
-    private void edytujWartosc() {
+    private void updateDBentry() {
         ContentValues wartosci = new ContentValues();
         dbProvider= new Provider();
         EditText brand = (EditText)

@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -53,9 +54,9 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         setUpContextualMenu();
         setUpOnClickListener();
 
-        //showDB();
+        showDB();
 
-        uruchomLoader();
+        //uruchomLoader();
 
 
     }
@@ -76,26 +77,14 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         kursor.moveToFirst();
 
         while (!kursor.isAfterLast()) {
-            int indeksKolumny = kursor.getColumnIndexOrThrow(DBHelper.COLUMN1);
-            String wartosc = kursor.getString(indeksKolumny);
+            int columnIndex = kursor.getColumnIndexOrThrow(DBHelper.COLUMN1);
+            String wartosc = kursor.getString(columnIndex);
             kursor.moveToNext();
         }
 
         SimpleCursorAdapter adapterBazy = new SimpleCursorAdapter(this, R.layout.list_item, kursor, mapujZ, mapujDo);
 
         list.setAdapter(adapterBazy);
-
-    }
-
-
-    public void updateDBEntry(String brand, String model, int position) {
-
-        ContentValues wartosci = new ContentValues();
-        wartosci.put(DBHelper.COLUMN1, brand);
-        wartosci.put(DBHelper.COLUMN2, model);
-
-
-        DB.update(DBHelper.TABLE_NAME, wartosci, DBHelper.ID + "=" + position, null);
 
     }
 
@@ -160,6 +149,12 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), AddSmartphoneData.class);
                 intent.putExtra("operationType", "update");
+
+                TextView brand = (TextView) view.findViewById(R.id.textView_brand);
+                TextView model = (TextView) view.findViewById(R.id.textView_model);
+
+                intent.putExtra("brand", brand.getText().toString());
+                intent.putExtra("model", model.getText().toString());
                 intent.putExtra("id", id);
 
                 startActivityForResult(intent, new Integer(0));
@@ -198,16 +193,11 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         super.onActivityResult(kodZadania, kodWyniku, data);
         if (kodWyniku == RESULT_OK) {
             Bundle bundle = data.getExtras();
-            String brand = bundle.getString("brand");
-            String model = bundle.getString("model");
             String operationType = bundle.getString("operationType");
             if (operationType.startsWith("insert")) {
-                //insertToDB(brand, model);
                 showToast("New entry added");
             }
             if (operationType.startsWith("update")) {
-                int position = bundle.getInt("position");
-                //updateDBEntry(brand, model, position);
                 showToast("Entry updated");
             }
         }

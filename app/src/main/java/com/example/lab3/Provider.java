@@ -46,14 +46,14 @@ public class Provider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         //czy wiersz czy cała tabela i otworzenie bazy
         int typUri = uriMatch.match(uri);
-        DBHelper dbHelper=new DBHelper(getContext());
-        SQLiteDatabase DB=dbHelper.getWritableDatabase();
+        DBHelper dbHelper = new DBHelper(getContext());
+        SQLiteDatabase DB = dbHelper.getWritableDatabase();
 
         long idDodanego = 0;
         switch (typUri) {
             case WHOLE_TABLE:
                 //zapisanie do magazynu – np. insert do bazy...
-                idDodanego=DB.insert(dbHelper.TABLE_NAME, //tabela
+                idDodanego = DB.insert(dbHelper.TABLE_NAME, //tabela
                         null, //nullColumnHack
                         values); //wartości
                 break;
@@ -68,8 +68,8 @@ public class Provider extends ContentProvider {
 
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         int typUri = uriMatch.match(uri);
-        DBHelper dbHelper=new DBHelper(getContext());
-        SQLiteDatabase DB=dbHelper.getWritableDatabase();
+        DBHelper dbHelper = new DBHelper(getContext());
+        SQLiteDatabase DB = dbHelper.getWritableDatabase();
 
         Cursor kursor = null;
         switch (typUri) {
@@ -106,8 +106,8 @@ public class Provider extends ContentProvider {
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         int typUri = uriMatch.match(uri);
-        DBHelper dbHelper=new DBHelper(getContext());
-        SQLiteDatabase DB=dbHelper.getWritableDatabase();
+        DBHelper dbHelper = new DBHelper(getContext());
+        SQLiteDatabase DB = dbHelper.getWritableDatabase();
 
         int deletedCount = 0;
         switch (typUri) {
@@ -133,8 +133,8 @@ public class Provider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         int typUri = uriMatch.match(uri);
-        DBHelper dbHelper=new DBHelper(getContext());
-        SQLiteDatabase DB=dbHelper.getWritableDatabase();
+        DBHelper dbHelper = new DBHelper(getContext());
+        SQLiteDatabase DB = dbHelper.getWritableDatabase();
 
         int liczbaZaktualizowanych = 0;
         switch (typUri) {

@@ -20,13 +20,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //tworzenie bazy
+        //Utworzenie bazy
         db.execSQL(DB_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        //aktualizacja bazy do nowej wersji
+        //Aktualizacja BD - usunięcie tabeli i dodanie jej od nowa
         db.execSQL(DB_DELETE);
         onCreate(db);
     }

@@ -32,24 +32,33 @@ public class AddSmartphoneData extends AppCompatActivity {
         handleOperationType();
 
 
-
     }
 
-    public void handleOperationType()
-    {
+    /**
+     * Funkcja obsługująca aktywność zależnie od powodu wywołania -
+     * dodanie lub edycja danych BD
+     */
+    public void handleOperationType() {
         Bundle bundleIn = getIntent().getExtras();
         operationType = bundleIn.getString("operationType");
-        if (operationType.contains("insert")) getSupportActionBar().setTitle("Add a smartphone to the DB");
-        if (operationType.contains("update"))
-        {
+        if (operationType.contains("insert"))
+            getSupportActionBar().setTitle("Add a smartphone to the DB");
+        if (operationType.contains("update")) {
             getSupportActionBar().setTitle("Update DB entry");
-            id=bundleIn.getLong("id");
+            id = bundleIn.getLong("id");
 
+            //Ustaw przekazane z poprzedniej aktywności wartości w inputach
             brand.setText(bundleIn.getString("brand"));
             model.setText(bundleIn.getString("model"));
         }
     }
 
+    /**
+     * Funkcja obsługująca walidację inputów podczas dodawania/edycji
+     * zawartości BD
+     *
+     * @return
+     */
     public boolean validate() {
         if (!isDataOK()) {
             showToast("Enter valid data");
@@ -57,6 +66,11 @@ public class AddSmartphoneData extends AppCompatActivity {
         } else return true;
     }
 
+    /**
+     * Funkcja logiczna sprawdzająca poprawność wprowadzonych danych
+     *
+     * @return
+     */
     public boolean isDataOK() {
         if (brand.getText().toString().length() >= 2 && version.getText().toString().length() >= 3 && model.getText().toString().length() >= 1) {
             return true;
@@ -64,6 +78,12 @@ public class AddSmartphoneData extends AppCompatActivity {
     }
 
 
+    /**
+     * Funkcja obsługująca przycisk "Cancel" - zakończenie
+     * działania aktywności oraz powrót do aktywności wywołującej
+     *
+     * @param view
+     */
     public void cancel(View view) {
         showToast("Cancelled");
         finish();
@@ -74,7 +94,7 @@ public class AddSmartphoneData extends AppCompatActivity {
 
             Bundle bundleOut = new Bundle();
             bundleOut.putString("operationType", operationType);
-            if (operationType.startsWith("update")) bundleOut.putLong("id",id);
+            if (operationType.startsWith("update")) bundleOut.putLong("id", id);
             Intent intentOut = new Intent();
             intentOut.putExtras(bundleOut);
             setResult(RESULT_OK, intentOut);
@@ -84,6 +104,12 @@ public class AddSmartphoneData extends AppCompatActivity {
         }
     }
 
+    /**
+     * Funkcja obsługująca wyświetlanie w przeglądarce
+     * wprowadzonego do input'u adresu WWW
+     *
+     * @param view
+     */
     public void www(View view) {
         if (www.getText().toString().contains(".") && www.getText().toString().length() >= 5) {
             Uri webpage;
@@ -95,14 +121,23 @@ public class AddSmartphoneData extends AppCompatActivity {
         } else showToast("Enter valid address");
     }
 
+    /**
+     * Funkcja przyspieszająca wyświetlanie toast'ów
+     *
+     * @param message
+     */
     public void showToast(String message) {
         Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
         toast.show();
     }
 
+    /**
+     * Funkcja obsługująca dodanie elementu do BD
+     * z użyciem providera i wprowadzonych do input'ów danych
+     */
     private void addDBentry() {
         ContentValues wartosci = new ContentValues();
-        dbProvider= new Provider();
+        dbProvider = new Provider();
         EditText brand = (EditText)
                 findViewById(R.id.editText_brand);
         EditText model = (EditText)
@@ -114,9 +149,13 @@ public class AddSmartphoneData extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Funkcja obsługująca aktualizację elementu BD
+     * z użyciem providera i wprowadzonych do input'ów danych
+     */
     private void updateDBentry() {
         ContentValues wartosci = new ContentValues();
-        dbProvider= new Provider();
+        dbProvider = new Provider();
         EditText brand = (EditText)
                 findViewById(R.id.editText_brand);
         EditText model = (EditText)
@@ -128,8 +167,6 @@ public class AddSmartphoneData extends AppCompatActivity {
         getContentResolver().update(dbProvider.URI_ZAWARTOSCI, wartosci, DBHelper.ID + " = " + Long.toString(id), null);
         finish();
     }
-
-
 
 
 }

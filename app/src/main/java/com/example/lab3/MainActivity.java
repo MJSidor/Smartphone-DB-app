@@ -1,23 +1,15 @@
 package com.example.lab3;
 
 
-import android.app.ActionBar;
-import android.app.ListActivity;
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.menu.ActionMenuItemView;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -38,9 +29,9 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
     private SQLiteDatabase DB;
     private Cursor kursor;
     private ListView list;
-    private SimpleCursorAdapter adapterBazy;
+    private SimpleCursorAdapter DBadapter;
     private Provider dbProvider;
-    protected int checkedCount = 0;
+    protected int checkedCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +53,10 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
 
     }
 
+    /**
+     * Wyświetlanie bazy danych przez kursor współpracujący z providerem,
+     * helperem bazy i adapterem ustawionym na obiekcie listView
+     */
     public void showDB() {
 
         String[] mapujZ = new String[]{
@@ -79,16 +74,20 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
 
         while (!kursor.isAfterLast()) {
             int columnIndex = kursor.getColumnIndexOrThrow(DBHelper.COLUMN1);
-            String wartosc = kursor.getString(columnIndex);
+            String value = kursor.getString(columnIndex);
             kursor.moveToNext();
         }
 
-        SimpleCursorAdapter adapterBazy = new SimpleCursorAdapter(this, R.layout.list_item, kursor, mapujZ, mapujDo);
+        DBadapter = new SimpleCursorAdapter(this, R.layout.list_item, kursor, mapujZ, mapujDo);
 
-        list.setAdapter(adapterBazy);
+        list.setAdapter(DBadapter);
 
     }
 
+    /**
+     * Funkcja obsługująca appBar pojawiający się po długim wciśnięciu elementu listView.
+     * Obsługuje zliczanie zaznaczonych elementów oraz ich usuwanie
+     */
     public void setUpContextualMenu() {
         list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         list.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -111,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
             onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.contextual_menu, menu);
-                checkedCount=0;
+                checkedCount = 0;
                 return true;
             }
 
@@ -144,6 +143,12 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         });
     }
 
+    /**
+     * Funkcja obsługująca krótkie kliknięcie elementu listView -
+     * edycja wpisu w bazie danych. Przekazuje do kolejnej aktywności typ wykonywanej operacji
+     * (update - w opozycji do insert) oraz początkowe dane elementu BD,
+     * które potem są wprowadzane do tekstowych inputów przy edycji jako wartości początkowe.
+     */
     public void setUpOnClickListener() {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -163,10 +168,13 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         });
     }
 
+    /**
+     * Funkcja usuwająca zaznaczone w listView elementy z użyciem provider'a
+     */
     private void deleteSelected() {
         long checked[] = list.getCheckedItemIds();
         for (int i = 0; i < checked.length; ++i) {
-            getContentResolver().delete(ContentUris.withAppendedId(dbProvider.URI_ZAWARTOSCI, checked[i]), DBHelper.ID + " = " + Long.toString(checked[i]), null);
+            getContentResolver().delete(ContentUris.withAppendedId(Provider.URI_ZAWARTOSCI, checked[i]), DBHelper.ID + " = " + Long.toString(checked[i]), null);
         }
     }
 
@@ -204,6 +212,11 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         }
     }
 
+    /**
+     * Funkcja obsługująca zmianę stanu urządzenia - np. obrót
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // save selected items counter
@@ -212,11 +225,19 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    /**
+     * unkcja obsługująca zmianę stanu urządzenia - np. obrót
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
+    /**
+     * Funkcja obsługująca zakończenie działania aplikacji - zamyka bazę danych
+     */
     @Override
     protected void onDestroy() {
         DB.close();
@@ -224,6 +245,9 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
 
     }
 
+    /**
+     * Funkcja przyspieszająca wyświetlanie toastów
+     */
     public void showToast(String message) {
         Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
         toast.show();
@@ -254,10 +278,14 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
 
     }
 
+    /**
+     * Funkcja inicjująca działanie loadera używanego do wyświetlania
+     * elementów bazy danych bez potrzeby odświeżania widoku po dokonaniu zmian na BD
+     */
     private void uruchomLoader() {
         getLoaderManager().initLoader(0, //identyfikator loadera
                 null, //argumenty (Bundle)
-                 this); //klasa implementująca LoaderCallbacks
+                this); //klasa implementująca LoaderCallbacks
 
         String[] mapujZ = new String[]{
                 DBHelper.COLUMN1, DBHelper.COLUMN2
@@ -266,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
                 R.id.textView_brand, R.id.textView_model
         };
 
-        SimpleCursorAdapter DBadapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.list_item, kursor, mapujZ, mapujDo);
+        DBadapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.list_item, kursor, mapujZ, mapujDo);
         list.setAdapter(DBadapter);
     }
 
@@ -284,24 +312,24 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
     @Override
     public void onLoadFinished(android.content.Loader<Cursor> loader, Cursor data) {
         //ustawienie danych w adapterze
-        adapterBazy.swapCursor(data);
+        DBadapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(android.content.Loader<Cursor> loader) {
-        adapterBazy.swapCursor(null);
+        DBadapter.swapCursor(null);
     }
 
     /*
     @Override
     public void onLoadFinished(Loader<Cursor> arg0, Cursor dane) {
         //ustawienie danych w adapterze
-        adapterBazy.swapCursor(dane);
+        DBadapter.swapCursor(dane);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> arg0) {
-        adapterBazy.swapCursor(null);
+        DBadapter.swapCursor(null);
     }
 */
 

@@ -4,17 +4,17 @@
 
     <item
         android:id="@+id/menu_header"
-        app:showAsAction="always"
-        android:title="@string/menu_header_text"
+        android:checkable="false"
         android:clickable="false"
-        />
+        android:title="@string/menu_header_text"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_counter"
-        app:showAsAction="always"
-        android:title=""
+        android:checkable="false"
         android:clickable="false"
-        />
+        android:title=""
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/deleteSmartphones"

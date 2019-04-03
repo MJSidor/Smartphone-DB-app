@@ -10,6 +10,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -35,11 +36,11 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
 
     private DBHelper DBHelper;
     private SQLiteDatabase DB;
-    private long rowID;
     private Cursor kursor;
     private ListView list;
     private SimpleCursorAdapter adapterBazy;
     private Provider dbProvider;
+    protected int checkedCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -201,6 +202,19 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
                 showToast("Entry updated");
             }
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // save selected items counter
+        //savedInstanceState.putInt(STATE_SCORE, currentScore);
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override

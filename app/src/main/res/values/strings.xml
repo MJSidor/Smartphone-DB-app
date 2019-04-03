@@ -5,6 +5,7 @@
     <string name="TextView_add_brand">Brand</string>
     <string name="TextView_add_model">Model</string>
     <string name="TextView_add_version">Android version</string>
+    <string name="TextView_add_version_landscape">Android\nversion</string>
     <string name="TextView_add_www">WWW</string>
     <string name="button_www_text">WWW</string>
     <string name="button_cancel_text">Cancel</string>

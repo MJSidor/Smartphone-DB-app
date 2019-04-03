@@ -46,9 +46,9 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         setUpContextualMenu();
         setUpOnClickListener();
 
-        showDB();
+        //showDB();
 
-        //uruchomLoader();
+        uruchomLoader();
 
 
     }
@@ -305,8 +305,9 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         String[] projection = {DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2}; // inne „kolumny” do wyświetlenia
         CursorLoader cLoader = new CursorLoader(this,
                 Provider.URI_ZAWARTOSCI, projection, null, null, null);
-        //return cLoader;
-        return null;
+        Loader<Cursor> loader = new Loader<Cursor>(this);
+        return loader;
+        //return null;
     }
 
     @Override

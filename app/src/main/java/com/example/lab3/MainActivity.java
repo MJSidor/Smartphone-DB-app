@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v4.content.CursorLoader;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.menu.ActionMenuItemView;
@@ -23,7 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class MainActivity extends AppCompatActivity implements AbsListView.MultiChoiceModeListener, android.app.LoaderManager.LoaderCallbacks<Cursor> {
+public class MainActivity extends AppCompatActivity implements AbsListView.MultiChoiceModeListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private DBHelper DBHelper;
     private SQLiteDatabase DB;
@@ -46,41 +48,9 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         setUpContextualMenu();
         setUpOnClickListener();
 
-        //showDB();
 
         uruchomLoader();
 
-
-    }
-
-    /**
-     * Wyświetlanie bazy danych przez kursor współpracujący z providerem,
-     * helperem bazy i adapterem ustawionym na obiekcie listView
-     */
-    public void showDB() {
-
-        String[] mapujZ = new String[]{
-                DBHelper.COLUMN1, DBHelper.COLUMN2
-        };
-        int[] mapujDo = new int[]{
-                R.id.textView_brand, R.id.textView_model
-        };
-
-        kursor = getContentResolver().query(Provider.URI_ZAWARTOSCI, new String[]{DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2}, null, null, null);
-
-        startManagingCursor(kursor);
-
-        kursor.moveToFirst();
-
-        while (!kursor.isAfterLast()) {
-            int columnIndex = kursor.getColumnIndexOrThrow(DBHelper.COLUMN1);
-            String value = kursor.getString(columnIndex);
-            kursor.moveToNext();
-        }
-
-        DBadapter = new SimpleCursorAdapter(this, R.layout.list_item, kursor, mapujZ, mapujDo);
-
-        list.setAdapter(DBadapter);
 
     }
 
@@ -120,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
                 switch (item.getItemId()) {
                     case R.id.deleteSmartphones:
                         deleteSelected();
-                        showDB();
                         checkedCount = 0;
                         deleteCounter = findViewById(R.id.menu_counter);
                         deleteCounter.setText(Integer.toString(checkedCount));
@@ -305,8 +274,9 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         String[] projection = {DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2}; // inne „kolumny” do wyświetlenia
         CursorLoader cLoader = new CursorLoader(this,
                 Provider.URI_ZAWARTOSCI, projection, null, null, null);
-        Loader<Cursor> loader = new Loader<Cursor>(this);
-        return loader;
+        return cLoader;
+        //Loader<Cursor> loader = new Loader<Cursor>(this);
+        //return loader;
         //return null;
     }
 

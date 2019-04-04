@@ -2,6 +2,8 @@ package com.example.lab3;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +20,8 @@ public class AddSmartphoneData extends AppCompatActivity {
     String operationType;
     long id;
     Provider dbProvider;
+    DBHelper DBhelper;
+    SQLiteDatabase DB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +32,8 @@ public class AddSmartphoneData extends AppCompatActivity {
         version = (EditText) findViewById(R.id.editText_version);
         model = (EditText) findViewById(R.id.editText_model);
         www = (EditText) findViewById(R.id.editText_www);
+        DBhelper = new DBHelper(this);
+        DB = DBhelper.getWritableDatabase();
 
         handleOperationType();
 
@@ -48,8 +54,11 @@ public class AddSmartphoneData extends AppCompatActivity {
             id = bundleIn.getLong("id");
 
             //Ustaw przekazane z poprzedniej aktywności wartości w inputach
+
             brand.setText(bundleIn.getString("brand"));
             model.setText(bundleIn.getString("model"));
+
+            showToast(getDBentry(id));
         }
     }
 
@@ -131,6 +140,31 @@ public class AddSmartphoneData extends AppCompatActivity {
         toast.show();
     }
 
+    public String getDBentry(long id) {
+        Cursor cursor = DB.query(true, //distinct
+                DBHelper.TABLE_NAME, //tabela
+                new String[]{DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2, DBHelper.COLUMN3, DBHelper.COLUMN4},
+                DBHelper.ID + " = " + Long.toString(id), //where
+                null, //whereArgs - argumenty zastępujące "?" w where
+                null, //group by
+                null, //having
+                null, //order by
+                null); //limit
+        startManagingCursor(cursor);
+        cursor.moveToFirst();
+
+        String value = "";
+
+        while (!cursor.isAfterLast()) {
+            int indeksKolumny = cursor.getColumnIndexOrThrow(DBHelper.COLUMN1);
+            value = cursor.getString(indeksKolumny);
+            cursor.moveToNext();
+        }
+        return value;
+
+    }
+
+
     /**
      * Funkcja obsługująca dodanie elementu do BD
      * z użyciem providera i wprowadzonych do input'ów danych
@@ -142,9 +176,16 @@ public class AddSmartphoneData extends AppCompatActivity {
                 findViewById(R.id.editText_brand);
         EditText model = (EditText)
                 findViewById(R.id.editText_model);
+        EditText www = (EditText)
+                findViewById(R.id.editText_www);
+        EditText version = (EditText)
+                findViewById(R.id.editText_version);
 
         wartosci.put("brand", brand.getText().toString());
         wartosci.put("model", model.getText().toString());
+        wartosci.put("www", www.getText().toString());
+        wartosci.put("version", version.getText().toString());
+
         Uri uriNowego = getContentResolver().insert(dbProvider.URI_ZAWARTOSCI, wartosci);
         finish();
     }
@@ -160,9 +201,17 @@ public class AddSmartphoneData extends AppCompatActivity {
                 findViewById(R.id.editText_brand);
         EditText model = (EditText)
                 findViewById(R.id.editText_model);
+        EditText www = (EditText)
+                findViewById(R.id.editText_www);
+        EditText version = (EditText)
+                findViewById(R.id.editText_version);
+
+
 
         wartosci.put("brand", brand.getText().toString());
         wartosci.put("model", model.getText().toString());
+        wartosci.put("www", www.getText().toString());
+        wartosci.put("version", version.getText().toString());
 
         getContentResolver().update(dbProvider.URI_ZAWARTOSCI, wartosci, DBHelper.ID + " = " + Long.toString(id), null);
         finish();

@@ -11,7 +11,9 @@ public class DBHelper extends SQLiteOpenHelper {
     public final static String TABLE_NAME = "devices";
     public final static String COLUMN1 = "brand";
     public final static String COLUMN2 = "model";
-    public final static String DB_CREATE = "CREATE TABLE " + TABLE_NAME + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN1 + " TEXT NOT NULL," + COLUMN2 + " TEXT);";
+    public final static String COLUMN3 = "version";
+    public final static String COLUMN4 = "www";
+    public final static String DB_CREATE = "CREATE TABLE " + TABLE_NAME + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN1 + " TEXT NOT NULL," + COLUMN2 + " TEXT" + COLUMN3 + "TEXT" + COLUMN4 + "TEXT);";
     private static final String DB_DELETE = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
     public DBHelper(Context context) {

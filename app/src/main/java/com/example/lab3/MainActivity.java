@@ -252,9 +252,9 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
      * elementów bazy danych bez potrzeby odświeżania widoku po dokonaniu zmian na BD
      */
     private void uruchomLoader() {
-        getLoaderManager().initLoader(0, //identyfikator loadera
-                null, //argumenty (Bundle)
-                this); //klasa implementująca LoaderCallbacks
+        getLoaderManager().initLoader(0,
+                null,
+                this);
 
         String[] mapujZ = new String[]{
                 DBHelper.COLUMN1, DBHelper.COLUMN2
@@ -270,14 +270,10 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        // adapter wymaga aby wyniku zapytania znajdowała się kolumna _id
-        String[] projection = {DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2}; // inne „kolumny” do wyświetlenia
+        String[] projection = {DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2}; // kolumny do wyświetlenia
         CursorLoader cLoader = new CursorLoader(this,
                 Provider.URI_ZAWARTOSCI, projection, null, null, null);
         return cLoader;
-        //Loader<Cursor> loader = new Loader<Cursor>(this);
-        //return loader;
-        //return null;
     }
 
     @Override
@@ -291,17 +287,5 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         DBadapter.swapCursor(null);
     }
 
-    /*
-    @Override
-    public void onLoadFinished(Loader<Cursor> arg0, Cursor dane) {
-        //ustawienie danych w adapterze
-        DBadapter.swapCursor(dane);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> arg0) {
-        DBadapter.swapCursor(null);
-    }
-*/
 
 }

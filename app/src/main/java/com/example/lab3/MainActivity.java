@@ -257,10 +257,10 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
                 this);
 
         String[] mapujZ = new String[]{
-                DBHelper.COLUMN1, DBHelper.COLUMN2
+                DBHelper.COLUMN1, DBHelper.COLUMN2, DBHelper.COLUMN3, DBHelper.COLUMN4
         };
         int[] mapujDo = new int[]{
-                R.id.textView_brand, R.id.textView_model
+                R.id.textView_brand, R.id.textView_model, R.id.textView_version, R.id.textView_www
         };
 
         DBadapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.list_item, kursor, mapujZ, mapujDo);
@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String[] projection = {DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2}; // kolumny do wyświetlenia
+        String[] projection = {DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2, DBHelper.COLUMN3, DBHelper.COLUMN4}; // kolumny do wyświetlenia
         CursorLoader cLoader = new CursorLoader(this,
                 Provider.URI_ZAWARTOSCI, projection, null, null, null);
         return cLoader;

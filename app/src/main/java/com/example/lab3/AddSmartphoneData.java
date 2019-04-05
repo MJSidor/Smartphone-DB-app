@@ -37,7 +37,6 @@ public class AddSmartphoneData extends AppCompatActivity {
 
         handleOperationType();
 
-
     }
 
     /**
@@ -51,14 +50,15 @@ public class AddSmartphoneData extends AppCompatActivity {
             getSupportActionBar().setTitle("Add a smartphone to the DB");
         if (operationType.contains("update")) {
             getSupportActionBar().setTitle("Update DB entry");
-            id = bundleIn.getLong("id");
+            id = bundleIn.getLong("id"); //pobierz ID wpisu w BD przekazane przez poprzednią aktywność
 
-            //Ustaw przekazane z poprzedniej aktywności wartości w inputach
+            //Ustaw w text inputach wartości pobrane z BD po indeksie przekazanym z poprzedniej aktywności
+            brand.setText(getDBentryColumnValue(id, "brand"));
+            model.setText(getDBentryColumnValue(id, "model"));
+            version.setText(getDBentryColumnValue(id, "version"));
+            www.setText(getDBentryColumnValue(id, "www"));
 
-            brand.setText(bundleIn.getString("brand"));
-            model.setText(bundleIn.getString("model"));
 
-            showToast(getDBentry(id));
         }
     }
 
@@ -140,7 +140,7 @@ public class AddSmartphoneData extends AppCompatActivity {
         toast.show();
     }
 
-    public String getDBentry(long id) {
+    public String getDBentryColumnValue(long id, String column) {
         Cursor cursor = DB.query(true, //distinct
                 DBHelper.TABLE_NAME, //tabela
                 new String[]{DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2, DBHelper.COLUMN3, DBHelper.COLUMN4},
@@ -154,10 +154,28 @@ public class AddSmartphoneData extends AppCompatActivity {
         cursor.moveToFirst();
 
         String value = "";
+        int columnIndex = cursor.getColumnIndexOrThrow(DBHelper.COLUMN1);
+        ;
 
         while (!cursor.isAfterLast()) {
-            int indeksKolumny = cursor.getColumnIndexOrThrow(DBHelper.COLUMN1);
-            value = cursor.getString(indeksKolumny);
+            switch (column) {
+                case "brand":
+                    columnIndex = cursor.getColumnIndexOrThrow(DBHelper.COLUMN1);
+                    break;
+                case "model":
+                    columnIndex = cursor.getColumnIndexOrThrow(DBHelper.COLUMN2);
+                    break;
+                case "version":
+                    columnIndex = cursor.getColumnIndexOrThrow(DBHelper.COLUMN3);
+                    break;
+                case "www":
+                    columnIndex = cursor.getColumnIndexOrThrow(DBHelper.COLUMN4);
+                    break;
+
+
+            }
+
+            value = cursor.getString(columnIndex);
             cursor.moveToNext();
         }
         return value;
@@ -205,7 +223,6 @@ public class AddSmartphoneData extends AppCompatActivity {
                 findViewById(R.id.editText_www);
         EditText version = (EditText)
                 findViewById(R.id.editText_version);
-
 
 
         wartosci.put("brand", brand.getText().toString());

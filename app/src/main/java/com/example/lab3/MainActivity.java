@@ -124,12 +124,6 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), AddSmartphoneData.class);
                 intent.putExtra("operationType", "update");
-
-                TextView brand = (TextView) view.findViewById(R.id.textView_brand);
-                TextView model = (TextView) view.findViewById(R.id.textView_model);
-
-                intent.putExtra("brand", brand.getText().toString());
-                intent.putExtra("model", model.getText().toString());
                 intent.putExtra("id", id);
 
                 startActivityForResult(intent, new Integer(0));
@@ -195,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
     }
 
     /**
-     * unkcja obsługująca zmianę stanu urządzenia - np. obrót
+     * Funkcja obsługująca zmianę stanu urządzenia - np. obrót
      *
      * @param savedInstanceState
      */

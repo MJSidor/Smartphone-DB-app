@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
 
             @Override
             public boolean
-            onCreateActionMode(ActionMode mode, Menu menu) {
+            onCreateActionMode(ActionMode mode, Menu menu) { //przy wywołaniu appBar'a
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.contextual_menu, menu);
                 checkedCount = 0;
@@ -84,16 +84,18 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
 
             @Override
             public boolean
-            onActionItemClicked(ActionMode mode, MenuItem item) {
+            onActionItemClicked(ActionMode mode, MenuItem item) { //po wciśnięciu przycisku usuwającego wpisy z BD
                 switch (item.getItemId()) {
                     case R.id.deleteSmartphones:
-                        deleteSelected();
-                        checkedCount = 0;
-                        deleteCounter = findViewById(R.id.menu_counter);
-                        deleteCounter.setText(Integer.toString(checkedCount));
-                        showToast("Deleting selected items...");
+                        if (checkedCount > 0) {
+                            deleteSelected();
+                            checkedCount = 0;
+                            deleteCounter = findViewById(R.id.menu_counter);
+                            deleteCounter.setText(Integer.toString(checkedCount));
+                            showToast("Deleting selected items...");
+                            return true;
+                        } else showToast("No selected entries to delete");
 
-                        return true;
                 }
                 return false;
             }
@@ -101,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
 
             @Override
             public void
-            onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+            onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) { //zaznaczanie lub odznaczanie kolejnych elementów
                 if (checked) checkedCount++;
                 if (!checked) checkedCount--;
                 deleteCounter = findViewById(R.id.menu_counter);
@@ -113,8 +115,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
     /**
      * Funkcja obsługująca krótkie kliknięcie elementu listView -
      * edycja wpisu w bazie danych. Przekazuje do kolejnej aktywności typ wykonywanej operacji
-     * (update - w opozycji do insert) oraz początkowe dane elementu BD,
-     * które potem są wprowadzane do tekstowych inputów przy edycji jako wartości początkowe.
+     * (update - w opozycji do insert) oraz id wybranego elementu BD
      */
     public void setUpOnClickListener() {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -139,6 +140,12 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         }
     }
 
+    /**
+     * Funkcja tworząca górny pasek menu na podstawie pliku XML
+     *
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -148,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
 
     /**
      * Funkcja obsługująca kliknięcie przycisku dodania wpisu do BD
+     *
      * @param item
      * @return
      */
@@ -163,10 +171,19 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
 
     }
 
+    /**
+     * Funkcja wywoływana po powrocie z wywołanej zawartości -
+     * wyświetla odpowiedniego toast'a w zależności od typu
+     * oraz powodzenia wykonanej na BD operacji
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
-    protected void onActivityResult(int kodZadania, int kodWyniku, Intent data) {
-        super.onActivityResult(kodZadania, kodWyniku, data);
-        if (kodWyniku == RESULT_OK) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
             Bundle bundle = data.getExtras();
             String operationType = bundle.getString("operationType");
             if (operationType.startsWith("insert")) {
@@ -266,6 +283,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
 
     /**
      * Funkcja wywoływana przy tworzeniu loadera
+     *
      * @param id
      * @param args
      * @return
@@ -280,6 +298,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
 
     /**
      * Funkcja wywoływana przy zakończeniu ładowania danych przez loader'a
+     *
      * @param loader
      * @param data
      */
@@ -291,6 +310,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
 
     /**
      * Funkcja wywoływana przy restarcie loader'a
+     *
      * @param loader
      */
     @Override

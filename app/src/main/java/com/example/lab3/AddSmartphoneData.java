@@ -58,7 +58,6 @@ public class AddSmartphoneData extends AppCompatActivity {
             version.setText(getDBentryColumnValue(id, "version"));
             www.setText(getDBentryColumnValue(id, "www"));
 
-
         }
     }
 
@@ -81,7 +80,7 @@ public class AddSmartphoneData extends AppCompatActivity {
      * @return
      */
     public boolean isDataOK() {
-        if (brand.getText().toString().length() >= 2 && version.getText().toString().length() >= 3 && model.getText().toString().length() >= 1) {
+        if (brand.getText().toString().length() >= 2 && version.getText().toString().length() >= 3 && version.getText().toString().contains(".") && model.getText().toString().length() >= 1 && www.getText().toString().contains(".") && www.getText().toString().length() >= 5) {
             return true;
         } else return false;
     }
@@ -98,14 +97,17 @@ public class AddSmartphoneData extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Funkcja obsługująca przycisk save - zapisanie lub aktualizacja wpisu w BD
+     * (w zależności od przekazanego argumentu przez wywołującą aktywność
+     * @param view
+     */
     public void save(View view) {
+
         if (validate()) {
 
-            Bundle bundleOut = new Bundle();
-            bundleOut.putString("operationType", operationType);
-            if (operationType.startsWith("update")) bundleOut.putLong("id", id);
             Intent intentOut = new Intent();
-            intentOut.putExtras(bundleOut);
+            intentOut.putExtra("operationType", operationType);
             setResult(RESULT_OK, intentOut);
             if (operationType.startsWith("insert")) addDBentry();
             if (operationType.startsWith("update")) updateDBentry();
@@ -140,12 +142,18 @@ public class AddSmartphoneData extends AppCompatActivity {
         toast.show();
     }
 
+    /**
+     * Funkcja zwracająca wartość kolumny o podanej nazwie we wpisie o podanym id w BD
+     * @param id
+     * @param column
+     * @return
+     */
     public String getDBentryColumnValue(long id, String column) {
         Cursor cursor = DB.query(true, //distinct
                 DBHelper.TABLE_NAME, //tabela
-                new String[]{DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2, DBHelper.COLUMN3, DBHelper.COLUMN4},
-                DBHelper.ID + " = " + Long.toString(id), //where
-                null, //whereArgs - argumenty zastępujące "?" w where
+                new String[]{DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2, DBHelper.COLUMN3, DBHelper.COLUMN4}, //kolumny
+                DBHelper.ID + " = " + Long.toString(id), //selection - where
+                null, //selectionArgs
                 null, //group by
                 null, //having
                 null, //order by
@@ -155,7 +163,6 @@ public class AddSmartphoneData extends AppCompatActivity {
 
         String value = "";
         int columnIndex = cursor.getColumnIndexOrThrow(DBHelper.COLUMN1);
-        ;
 
         while (!cursor.isAfterLast()) {
             switch (column) {
@@ -172,7 +179,6 @@ public class AddSmartphoneData extends AppCompatActivity {
                     columnIndex = cursor.getColumnIndexOrThrow(DBHelper.COLUMN4);
                     break;
 
-
             }
 
             value = cursor.getString(columnIndex);
@@ -188,6 +194,7 @@ public class AddSmartphoneData extends AppCompatActivity {
      * z użyciem providera i wprowadzonych do input'ów danych
      */
     private void addDBentry() {
+
         ContentValues wartosci = new ContentValues();
         dbProvider = new Provider();
         EditText brand = (EditText)
@@ -204,7 +211,7 @@ public class AddSmartphoneData extends AppCompatActivity {
         wartosci.put("www", www.getText().toString());
         wartosci.put("version", version.getText().toString());
 
-        Uri uriNowego = getContentResolver().insert(dbProvider.URI_ZAWARTOSCI, wartosci);
+        getContentResolver().insert(dbProvider.URI_ZAWARTOSCI, wartosci);
         finish();
     }
 

@@ -21,7 +21,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -48,8 +47,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         setUpContextualMenu();
         setUpOnClickListener();
 
-
-        uruchomLoader();
+        initializeLoader();
 
 
     }
@@ -148,9 +146,14 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         return true;
     }
 
+    /**
+     * Funkcja obsługująca kliknięcie przycisku dodania wpisu do BD
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+        // Handle menu item selection
         if (item.getItemId() == R.id.addSmartphone) {
             Intent intent = new Intent(this, AddSmartphoneData.class);
             intent.putExtra("operationType", "insert");
@@ -245,37 +248,51 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
      * Funkcja inicjująca działanie loadera używanego do wyświetlania
      * elementów bazy danych bez potrzeby odświeżania widoku po dokonaniu zmian na BD
      */
-    private void uruchomLoader() {
+    private void initializeLoader() {
         getLoaderManager().initLoader(0,
                 null,
                 this);
 
         String[] mapujZ = new String[]{
-                DBHelper.COLUMN1, DBHelper.COLUMN2, DBHelper.COLUMN3, DBHelper.COLUMN4
+                DBHelper.COLUMN1, DBHelper.COLUMN2
         };
         int[] mapujDo = new int[]{
-                R.id.textView_brand, R.id.textView_model, R.id.textView_version, R.id.textView_www
+                R.id.textView_brand, R.id.textView_model
         };
 
         DBadapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.list_item, kursor, mapujZ, mapujDo);
         list.setAdapter(DBadapter);
     }
 
-
+    /**
+     * Funkcja wywoływana przy tworzeniu loadera
+     * @param id
+     * @param args
+     * @return
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String[] projection = {DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2, DBHelper.COLUMN3, DBHelper.COLUMN4}; // kolumny do wyświetlenia
+        String[] projection = {DBHelper.ID, DBHelper.COLUMN1, DBHelper.COLUMN2}; // kolumny do wyświetlenia
         CursorLoader cLoader = new CursorLoader(this,
                 Provider.URI_ZAWARTOSCI, projection, null, null, null);
         return cLoader;
     }
 
+    /**
+     * Funkcja wywoływana przy zakończeniu ładowania danych przez loader'a
+     * @param loader
+     * @param data
+     */
     @Override
     public void onLoadFinished(android.content.Loader<Cursor> loader, Cursor data) {
         //ustawienie danych w adapterze
         DBadapter.swapCursor(data);
     }
 
+    /**
+     * Funkcja wywoływana przy restarcie loader'a
+     * @param loader
+     */
     @Override
     public void onLoaderReset(android.content.Loader<Cursor> loader) {
         DBadapter.swapCursor(null);

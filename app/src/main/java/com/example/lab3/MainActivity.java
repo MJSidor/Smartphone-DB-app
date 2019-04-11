@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
     private ListView list;
     private SimpleCursorAdapter DBadapter;
     private Provider dbProvider;
-    protected int checkedCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
         list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         list.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             int checkedCount = 0;
+
             private ActionMenuItemView deleteCounter = findViewById(R.id.menu_counter);
 
             @Override
@@ -67,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
             onPrepareActionMode(ActionMode mode, Menu menu) {
                 return false;
             }
+
+
 
             @Override
             public void
@@ -87,14 +89,13 @@ public class MainActivity extends AppCompatActivity implements AbsListView.Multi
             onActionItemClicked(ActionMode mode, MenuItem item) { //po wciśnięciu przycisku usuwającego wpisy z BD
                 switch (item.getItemId()) {
                     case R.id.deleteSmartphones:
-                        if (checkedCount > 0) {
-                            deleteSelected();
-                            checkedCount = 0;
-                            deleteCounter = findViewById(R.id.menu_counter);
-                            deleteCounter.setText(Integer.toString(checkedCount));
-                            showToast("Deleting selected items...");
-                            return true;
-                        } else showToast("No selected entries to delete");
+                        deleteSelected();
+                        checkedCount = 0;
+                        deleteCounter = findViewById(R.id.menu_counter);
+                        deleteCounter.setText(Integer.toString(checkedCount));
+                        showToast("Deleting selected items...");
+                        return true;
+
 
                 }
                 return false;
